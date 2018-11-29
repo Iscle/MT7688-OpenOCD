@@ -22,10 +22,24 @@ MT76X8系列是MIPS-24kec内核的soc芯片, 该系列soc提供了JTAG接口可�
 
 # 如何使用
 下载debug.cfg与ramboot.bin, 其中debug.cfg为OpenOCD配置文件, ramboot.bin为预先编译好的uboot, 代码空间位于内存当中.  
-请使用这个配置文件启动OpenOCD:  
-openocd -f /path/to/debug.cfg  
+如果使用了gpio模拟jlink，比如使用树莓派或者另一7688等，请使用这个配置文件启动OpenOCD:  
+```
+openocd -f /path/to/jlink_gpio.cfg
+```
+或者用购买的JTAG-SEEGER调试器
+```
+openocd -f /path/to/jlink_segger.cfg
+```
+
 之后请telnet连接到openocd的会话，执行 ddrinit 命令初始化DDR内存.  
 DDR内存初始化成功后, 执行 load_ramboot 命令, 将uboot下载到ram中运行. 之后您即可使用uboot向flash烧写新的代码.
+```
+telnet localhost 4444
+> reset halt
+> ddrinit
+> load_image /home/.../.../ramboot-cache.bin 0x80200000
+> resume 0x80200000
+```
 
 # 特殊说明
 您也可以自行编译您自己的uboot并使用该脚本下载到ram当中运行, 当然, 您需要自行寻找编译uboot到MT76x8的方法.  
